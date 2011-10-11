@@ -1,0 +1,59 @@
+Director
+Actor
+
+导演醒来 >> 叫醒所有属于他管的演员，然后分配最开始的一次任务
+演员之前木有交互，他有事情只能通知导演，导演接到通知后做出判断，下出下一道指令
+导演观察着所有的演员，清楚每个演员的一举一动
+为了避免混乱，演员之间木有任何的交互，他只能知道发生在自己身上的事，然后通知导演，再完成导演传下的命令。
+
+一场剧只有一个导演。管着这场剧所有的演员
+初始化一个导演的时候，他必须清楚两件事：
+    1.第一次要分配的任务
+    2.能够预先知道所有演员可能会发生的事，并且都有相对应的策略。才能导演好这场戏。
+
+初始化一个演员的时候， 他需要知道：
+    1.他最开始该是什么样子
+    2.自己发生了事情（比如被click之类）的话，立刻通知导演。
+    3.拿到导演反馈回来的命令，接着演。
+    4.演员一定是没有主见的，遇到事情的时候不能私自决定该怎么做。
+
+var tab = Director('tab', {
+    firstAct: function () {
+        tabH.setCurrent(0);
+        tabC.setCurrent(0);
+    },
+    observe: {
+        'tabH': {
+            'clicked': 
+        },
+        'tabC': 
+    }
+});
+
+var tabH = Actor('tabH', {
+    director: tab,
+    wake: function () {
+        this.render();
+        this.bindEvent();
+    },
+    bindEvent: function () {
+        var self = this;
+        addEvent(el, 'click', function () {
+            self.notifyDirector('clicked', i)
+        })
+    },
+    render: function () {
+    
+    },
+    setCurrent: function (n) {
+        
+    }
+});
+var tabC = Actor(tabC);
+
+tab.observe(tabH);
+tab.observe(tabC);
+
+
+
+tab.wake();
