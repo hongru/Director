@@ -78,7 +78,8 @@
 	var Director = Person.extend({
 		init: function (name, fn) {
 			this._super(name);
-			!!fn && fn.call && fn.apply && extend(this, new fn);
+			!!fn && typeof fn == 'function' && fn.call && fn.apply && fn.call(this);
+            !!fn && typeof fn == 'object' && extend(this, fn);
 			this.actors = [];
 			this._observes = {};
 		},
@@ -125,7 +126,8 @@
 	var Actor = Person.extend({
 		init: function (opt, fn) {
 			this._super(opt.name);
-			!!fn && fn.call && fn.apply && extend(this, new fn);
+			!!fn && typeof fn == 'function' && fn.call && fn.apply && fn.call(this);
+            !!fn && typeof fn == 'object' && extend(this, fn);
 			this.director = opt.director;
 			if (this.director instanceof Director) {
 				this.director.actors.push(this);
