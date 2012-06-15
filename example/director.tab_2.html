@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<head>
+<script src="../director.0.2.js"></script>
+<style>
+    body, ul {margin: 0; padding: 0; font-family: Georgia; text-align: center;}
+    ul, li {list-style: none}
+    #tab-wrap {
+        width: 300px;
+        margin: 20px auto;
+        border: 1px solid #999;
+        -webkit-box-shadow: 0 0 5px #999;
+        -moz-box-shadow: 0 0 5px #999;
+    }
+    #tab-header {
+        
+    }
+    #tab-header li {
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        width: 96px;
+        font-size: 0;
+        letter-spacing: -4px;
+    }
+    #tab-header li a {
+        width: 100%;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 0;
+        cursor: pointer;
+        display: block;
+        border-bottom: 1px solid #ccc;
+        height: 40px;
+        line-height: 40px;
+    }
+    #tab-header li a:hover { background: #f9de8f }
+    #tab-header li.current a {
+        background: #ff8a00;
+    }
+    #tab-content {
+        height: 200px;
+        width: 100%;
+        font-size: 20px;
+        line-height: 100px;
+    }
+    #tab-content li {
+        display: none;
+    }
+    #tab-content li.current {display: block}
+</style>
+</head>
+
+<body>
+    <h1>Director pattern demo</h1>
+    <div id="tab-wrap">
+        <ul id="tab-header">
+            <li><a data-index="0"> one </a></li>
+            <li><a data-index="1"> two </a></li>
+            <li><a data-index="2"> three </a></li>
+        </ul>
+        <ul id="tab-content">
+            <li> content  One </li>
+            <li> content  Two </li>
+            <li> content  Three </li>
+        </ul>
+    </div>
+    
+    <script>
+        Director('tab').$define(function () {
+            var me = this;
+            function dispatchClickEvent () {
+                me.util.addEvent(document.body, 'click', function (e) {
+                    console.log(e.target);
+                });
+            }
+            this.$firstAct = function () {
+                dispatchClickEvent();
+            };
+            
+            this.log = function (msg) {
+                console && console.log(msg);
+            }
+        });
+        
+        Director('tab').$define('util', function () {
+            var addEvent = function (o, e, f) {
+                o.addEventListener ? o.addEventListener(e, f, false) : o.attachEvent('on'+e, function () {f.call(o)});
+            };
+            var $ = function (o) {
+                return (o.nodeType && o.nodeType == 1) ? o : (document.getElementById(o) || document.querySelector(o));
+            };
+            function hasClass(ele,cls) {
+                return ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+            }
+
+            function addClass(ele,cls) {
+                if (!hasClass(ele,cls)) ele.className += " "+cls;
+            }
+             
+            function removeClass(ele,cls) {
+                if (hasClass(ele,cls)) {
+                    var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+                    ele.className=ele.className.replace(reg,' ');
+                }
+            }
+            
+            // public
+            this.$ = $;
+            this.addEvent = addEvent;
+            this.hasClass = hasClass;
+            this.addClass = addClass;
+            this.removeClass = removeClass;
+        });
+        
+        Director('tab').$actor('hd').$define(function () {
+            var me = this,
+                dr = me.$director;
+            this.$wake = function () {
+                dr.log('hd wake');
+            }
+        });
+        
+        Director('tab').$actor('con').$define(function () {
+            var me = this,
+                dr = me.$director;
+            this.$wake = function () {
+                dr.log('con wake')
+            }
+        });
+        
+        // init wake
+        Director('tab').$wake();
+        
+    </script>
+</body>
+</html>
