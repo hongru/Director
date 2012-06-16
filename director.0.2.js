@@ -81,22 +81,41 @@
 
         return fn;
     };
+    
+    // mix object
+    function mix (target, source, isOverwrite) {
+        if (isOverwrite == undefined) isOverwrite = true;
+        for (var k in source) {
+            if (!(k in target) || isOverwrite) {
+                target[k] = source[k];
+            }
+        }
+        return target;
+    }
 
+    /**
+     * Base Class
+     */
     var toString = Object.prototype.toString;
-    // base class
     var Person = Class(function (name) {
         this.name = name;
     }).methods({
         $define: function (ns, fn) {
             var me = this;
-            if (typeof ns == 'string') {
-                this[ns] = toString.call(this[ns]) == '[object Object]' ? this[ns] : {};
-                me = this[ns];
-            } else if (typeof ns == 'function') {
+            if (fn) {
+                if (typeof ns == 'string') {
+                    this[ns] = toString.call(this[ns]) == '[object Object]' ? this[ns] : {};
+                    me = this[ns];
+                }    
+            } else {
                 fn = ns;
             }
-
-            fn.call(me);
+            
+            if (typeof fn == 'function') {
+                fn.call(me);
+            } else if (typeof fn == 'object') {
+                mix(me, fn);
+            }
 
         }
     });
@@ -107,16 +126,10 @@
         this.$director.$actors[name] = this;
 
     }).methods({
-        // notify the director
-        // it will be activated if some handlers subscribed by '$observe'
-        $notify: function (type, args) {
-            if (this.$director._observers[name] 
-                && toString.call(this.$director._observers[name][type]) == '[object Array]') {
-                for (var i = 0; i < this.$director._observers[name][type].length; i ++) {
-                    var handle = this.$director._observers[name][type][i];
-                    handle.apply(this, Array.prototype.slice.call(arguments, 1));
-                }    
-            }        
+        $focus: function (type, fn) {
+            if (!this.$director._observers[this.name]) { this.$director._observers[this.name] = {}; }
+            if (!this.$director._observers[this.name][type]) { this.$director._observers[this.name][type] = []; }
+            this.$director._observers[this.name][type].push(fn);
         }
     });
 
@@ -139,10 +152,14 @@
         $actor: function (name) {
             return this.$actors[name] || new _Actor(name, this);
         },
-        $observe: function (actor, type, handler) {
-            if (!this._observers[actor]) { this._observers[actor] = {}; }
-            if (!this._observers[actor][type]) { this._observers[actor][type] = []; }
-            this._observers[actor][type].push(handler);
+        $notify: function (type, msg) {
+            for (var a in this._observers) {
+                if (this._observers[a][type] && this._observers[a][type].length) {
+                    for (var i = 0; i < this._observers[a][type].length; i ++) {
+                        this._observers[a][type][i].apply(null, Array.prototype.slice.call(arguments, 1));
+                    }
+                }
+            }
         }
     });
 
