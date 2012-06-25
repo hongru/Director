@@ -6,7 +6,8 @@ Director pattern
 reutrn a Director instance which named 'tab', if not existed, will create a new instance
 
 + ``$define``  define this director
-> 
+
+useage:
 
 
     Director('hongru').$define(function () {
