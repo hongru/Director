@@ -18,7 +18,7 @@ Director('tab').$define(function () {
         });
     }
     // firstAct auto called when $wake()
-    this.$firstAct = function () {
+    this.$act = function () {
         dispatchClickEvent(); 
         me.go(0);
         

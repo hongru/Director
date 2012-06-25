@@ -142,12 +142,15 @@
         _directors[name] = this;
 
     }).methods({
-        // dispatch $wake of all actors
+        // director wake -->
+        // dispatch $wake of all actors -->
+        // act begin
         $wake: function () {
+            this.$prepare && this.$prepare();
             for (var k in this.$actors) {
                 this.$actors[k].$wake && this.$actors[k].$wake();
             }    
-            this.$firstAct && this.$firstAct();
+            this.$act && this.$act();
         },
         $actor: function (name) {
             return this.$actors[name] || new _Actor(name, this);
