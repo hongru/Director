@@ -7,6 +7,7 @@ reutrn a Director instance which named 'tab', if not existed, will create a new 
 
 + ``$define``  define this director
     
+
     Director('hongru').$define(function () {
         // todo
         this.age = 23;
