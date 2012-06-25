@@ -56,6 +56,8 @@ in actor's constructor, ``this.$director`` can get his director.
     
 + ``$notify`` notify his actors an event with msgs, his actor who ``$focus`` this event will activate the right handler
 
+related to [his director] ``$notify`` 
+
     Director('hongru').$notify('onWinResize', {width: 300, height: 200});
     
     
